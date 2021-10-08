@@ -269,9 +269,9 @@ class ShortDescription:
 				h[0] += ' ' + self.txt('of', opt["lang"]) + ' ' + item_labels[0][1]
 			if taxon_name is not None:
 				h.append('[' + taxon_name + ']')
-			self.setTarget(opt, self.ucFirst(' '.join(h)), q)
+			return self.setTarget(opt, self.ucFirst(' '.join(h)), q)
 		else:
-			self.describeGeneric(q, claims, opt)  # Fallback
+			return self.describeGeneric(q, claims, opt)  # Fallback
 
 	def describePerson(self, q, claims, opt):
 		load_items = []
@@ -339,7 +339,7 @@ class ShortDescription:
 		if len(h) == 0:
 			h.append(self.txt('person', opt["lang"]))
 
-		self.setTarget(opt, self.ucFirst(' '.join(h)), q)
+		return self.setTarget(opt, self.ucFirst(' '.join(h)), q)
 
 	def getBestQuantity(self, claims):
 		dv = claims[0]["mainsnak"]["datavalue"]
@@ -476,7 +476,7 @@ class ShortDescription:
 		else:
 			h = self.ucFirst(" ".join(h))
 			h = re.sub(" , ", ", ", h)
-		self.setTarget(opt, h, q)
+		return self.setTarget(opt, h, q)
 
 	def add2desc(self, h, item_labels, props, opt=None):
 		if opt is None:
@@ -524,7 +524,7 @@ class ShortDescription:
 			print ("TAXON")
 			return self.describeTaxon(q, claims, opt)
 		elif self.isDisambig(claims):
-			print ("DISAMBIg`")
+			print ("DISAMBIG`")
 			return self.setTarget(opt, self.txt("disambig", opt["lang"]), q)
 		else:
 			print ("GENERIC")
