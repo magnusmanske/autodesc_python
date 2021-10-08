@@ -1,5 +1,5 @@
 import re
-import urllib
+import requests
 import json
 
 
@@ -15,20 +15,20 @@ class WikiDataItem:
 		return self.placeholder
 
 	def isItem(self):
-		return False if self.raw is None else self.raw.ns == 0
+		return False if self.raw is None else self.raw["ns"] == 0
 
 	def isProperty(self):
-		return False if self.raw is None else self.raw.ns == 128
+		return False if self.raw is None else self.raw["ns"] == 128
 
 	def getID(self):
 		if self.raw is not None:
-			return self.raw.id
+			return self.raw["id"]
 
 	def getURL(self):
-		return "" if self.raw is None else f"https://www.wikidata.org/wiki/{self.raw.title}"
+		return "" if self.raw is None else f"https://www.wikidata.org/wiki/{self.raw['title']}"
 
 	def getPropertyList(self):
-		return [] if self.raw.claims is None else self.raw.claims.keys()
+		return [] if self.raw["claims"] is None else self.raw["claims"].keys()
 
 	def getLink(self, o):
 		if o is None:
@@ -41,11 +41,11 @@ class WikiDataItem:
 		url = self.getURL()
 
 		if o["add_q"]:
-			h += "q="" + self.raw.title + "" "
+			h += "q='" + self.raw["title"] + "' "
 		if o["desc"] is not None:
-			h += "title="" + self.getDesc() + "" "
+			h += "title='" + self.getDesc() + "' "
 		else:
-			h += f"title='{self.raw.title}' "
+			h += f"title='{self.raw['title']}' "
 		h += f"href='{url}'>"
 		if "title" in o:
 			h += o["title"]
@@ -65,7 +65,7 @@ class WikiDataItem:
 				aliases[v2.value] = 1
 
 		if include_labels:
-			raw_labels = {} if self.raw.labels is None else self.raw.labels
+			raw_labels = {} if self.raw["labels"] is None else self.raw["labels"]
 			for (lang, v1) in raw_labels.items():
 				aliases[v1["value"]] = 1
 
@@ -92,18 +92,21 @@ class WikiDataItem:
 	def getMultimediaFilesForProperty(self, p):
 		ret = []
 		claims = self.getClaimsForProperty(p)
-		for (dummy, c) in claims.items():
-			s = self.getClaimTargetString(c)
+		for claim in claims:
+			s = self.getClaimTargetString(claim)
 			if s is not None:
 				ret.append(s)
 		return ret
 
 	def getClaimsForProperty(self, p):
 		p = self.wd.convertToStringArray(p, "P")[0]
-		if self.raw is None or self.raw.claims is None:
+		if self.raw is None or "claims" not in self.raw:
 			return []
-		ret = self.raw["claims"][self.wd.getUnifiedID(p)]
-		return [] if ret is None else ret
+		property = self.wd.getUnifiedID(p)
+		if property in self.raw["claims"]:
+			return self.raw["claims"][property]
+		else:
+			return []
 
 	def hasClaims(self, p):
 		return len(self.getClaimsForProperty(p)) > 0
@@ -111,18 +114,18 @@ class WikiDataItem:
 	def getClaimLabelsForProperty(self, p):
 		ret = []
 		claims = self.getClaimsForProperty(p)
-		for c in claims.values():
-			q = self.getClaimTargetItemID(c)
-			if q is None or self.wd.items[q] is None:
+		for claim in claims:
+			q = self.getClaimTargetItemID(claim)
+			if q is None or q not in self.wd.items:
 				continue
 			ret.append(self.wd.items[q].getLabel())
 		return ret
 
-	def getClaimItemsForProperty(self, p, return_all):
+	def getClaimItemsForProperty(self, p, return_all = False):
 		ret = []
 		claims = self.getClaimsForProperty(p)
-		for c in claims.values():
-			q = self.getClaimTargetItemID(c)
+		for claim in claims:
+			q = self.getClaimTargetItemID(claim)
 			if q is None:
 				continue
 			if q in self.wd.items and not return_all:
@@ -165,21 +168,21 @@ class WikiDataItem:
 	def getClaimObjectsForProperty(self, p):
 		ret = []
 		claims = self.getClaimsForProperty(p)
-		for c in claims.values():
-			o = self.getSnakObject(c.mainsnak)
+		for claim in claims:
+			o = self.getSnakObject(claim["mainsnak"])
 			if o["type"] is None:
 				return
-			o["rank"] = c.rank
+			o["rank"] = claim["rank"]
 			o["qualifiers"] = {}
-			qualifiers = {} if c.qualifiers is None else c.qualifiers
+			qualifiers = {} if claim["qualifiers"] is None else claim["qualifiers"]
 			for (qp, qv) in qualifiers.items():
 				o["qualifiers"][qp] = []
-				for v in qv.values():
+				for v in qv:
 					o["qualifiers"][qp].append(self.getSnakObject(v))
 			ret.append(o)
 		return ret
 
-	def getDesc(self, language):
+	def getDesc(self, language = None):
 		desc = ""
 		if language is None:
 			for lang in self.wd.main_languages:
@@ -233,12 +236,12 @@ class WikiDataItem:
 	def getWikiLinks(self):
 		if self.raw is None:
 			return {}
-		return {} if self.raw.sitelinks is None else self.raw.sitelinks
+		return {} if self.raw["sitelinks"] is None else self.raw["sitelinks"]
 
 	def getClaimRank(self, claim):
 		if claim is None:
 			return
-		return "normal" if claim.rank is None else claim.rank
+		return "normal" if claim["rank"] is None else claim["rank"]
 
 	def getClaimTargetItemID(self, claim):
 		if claim is None:
@@ -253,7 +256,7 @@ class WikiDataItem:
 			return
 		if "numeric-id" not in claim["mainsnak"]["datavalue"]["value"]:
 			return
-		return "Q" + claim["mainsnak"]["datavalue"]["value"]["numeric-id"]
+		return "Q" + str(claim["mainsnak"]["datavalue"]["value"]["numeric-id"])
 
 	def getClaimTargetString(self, claim):
 		return self.getClaimValueWithType(claim, "string")
@@ -279,8 +282,8 @@ class WikiDataItem:
 	def hasClaimItemLink(self, p, q):
 		q = self.wd.convertToStringArray(q, "Q")[0]
 		claims = self.getClaimsForProperty(p)
-		for c in claims.values():
-			id = self.getClaimTargetItemID(c)
+		for claim in claims:
+			id = self.getClaimTargetItemID(claim)
 			if id is None or id != q:
 				continue
 			return True
@@ -326,7 +329,7 @@ class WikiData:
 	# Constructor
 	def __init__(self):
 		self.restrict_to_langs = None
-		self.api = "https://www.wikidata.org/w/api.php?callback=?"
+		self.api = "https://www.wikidata.org/w/api.php"
 		self.max_get_entities = 50
 		self.max_get_entities_smaller = 25
 		self.language = "en"  # Default
@@ -359,10 +362,10 @@ class WikiData:
 		ret = []
 		if o is None:
 			return ret
-		if type(o) is dict:
-			for v in o.values:
+		if isinstance(o, dict):
+			for v in o.values():
 				ret.append(self.getUnifiedID(v, type))
-		elif type(o) is list:
+		elif isinstance(o, list):
 			for v in o:
 				ret.append(self.getUnifiedID(v, type))
 		else:
@@ -393,7 +396,7 @@ class WikiData:
 		hadthat = {}
 		for q in item_list:
 			q = str(q)
-			if q.numeric():
+			if q.isnumeric():
 				q = "Q" + q
 			if q in self.items or q in hadthat:
 				continue  # Have that one
@@ -419,18 +422,12 @@ class WikiData:
 				"format": "json"
 			}
 
-			data = self.getResponse(self.api, api_params)
+			data = self.getJsonFromUrl(self.api, api_params)
 			entities = data["entities"] if "entities" in data else {}
 			for (k, v) in entities.items():
 				q = self.getUnifiedID(k)
 				self.items[q] = WikiDataItem(self, v)
 		return ids
 
-	def getResponse(self, url, params=None):
-		open_url = urllib.request.urlopen(url, data=params)
-		if open_url.getcode() == 200:
-			data = open_url.read()
-			json_data = json.loads(data)
-		else:
-			print("Error receiving data", open_url.getcode())
-		return json_data
+	def getJsonFromUrl(self, url, params=None):
+		return json.loads(requests.post(url, data=params).text)

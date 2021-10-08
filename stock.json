@@ -1,0 +1,57 @@
+{
+"BC": {
+"cs": "př. n. l.", "de": "v. Chr.", "el": "π.Χ.", "en": "BC", "es": "A.C.", "fr": "avant Jésus-Christ", "it": "a.C.", "mk": "п.н.е.", "nb": "f.Kr.", "nl": "A.D.", "pl": "p.n.e.", "th": "ก่อนคริสตกาล", "tr": "M.Ö.", "vi": "TCN"}
+, "by": {
+"cs": "od", "de": "von", "el": "του", "en": "by", "es": "por", "fr": "par", "it": "da", "lb": "vum", "mk": "од", "nb": "av", "nl": "door", "pl": "autorstwa", "te": "చేత తయారు చేయబడినది", "th": "โดย", "tr": "tarafından", "vi": "bởi"}
+, "cannot_describe": {
+"cs": "Neumím automaticky popsat", "de": "Automatische Beschreibung nicht verfügbar", "el": "Δεν μπορεί να περιγραφεί", "en": "Cannot auto-describe", "es": "No se puede auto-describir", "fr": "Description automatique impossible", "it": "Non è possibile descrivere automaticamente", "mk": "Не можам да автоопишам", "nb": "Kan ikke beskrive automatisk", "nl": "Geen automatische omschrijving beschikbaar", "pl": "Nie jest dostępny automatyczny opis", "th": "ไม่สามารถให้คำอธิบายโดยอัตโนมัติได้", "tr": "Otomatik olarak tanımlanamaz", "vi": "Không thể miêu tả tự động"}
+, "child of": {
+"cs": "dítě osoby", "de": "Kind von", "el": "τέκνο του", "en": "child of", "es": "hijo de", "fr": "enfant de", "it": "figlio di", "lb": "Kand vum", "mk": "зависник на", "nb": "barn av", "nl": "kind van", "pl": "dziecko osoby:", "th": "ส่วนหนึ่งใน", "vi": "con của"}
+, "disambig": {
+"cs": "Rozcestník na Wikipedii\n", "de": "Wikipedia-Begriffsklärungsseite", "el": "Σελίδα αποσαφήνισης στη Βικιπαίδεια", "en": "Wikipedia disambiguation page", "es": "página de desambiguación de Wikipedia", "fr": "page d'homonymie d'un projet Wikimédia", "it": "pagina di disambiguazione di Wikipedia", "mk": "Појаснување на Википедија", "nb": "Wikimedia-pekerside", "nl": "Wikimedia-doorverwijspagina", "pl": "Strona ujednoznaczniająca", "th": "หน้าแก้ความกำกวมวิกิพีเดีย", "tr": "Vikipedi anlam ayrımı sayfası", "vi": "Trang định hướng Wikipedia"}
+, "for": {
+"cs": "pro", "de": "für", "el": "για", "en": "for", "es": "para", "fr": "pour", "it": "per", "lb": "fir", "mk": "за", "nb": "for", "nl": "voor", "pl": "na", "th": "สำหรับ", "tr": "için", "vi": "cho"}
+, "found_in": {
+"cs": "nalezeno v", "en": "found in", "es": "encontrado en", "it": "trovato in", "mk": "наоѓалиште", "nb": "funnet i", "nl": "gevonden in", "pl": "znaleziono w", "th": "พบใน", "tr": "bulunan"}
+, "generating_auto_content": {
+"cs": "Generuji automatický obsah", "de": "Erzeuge automatische Beschreibung...", "en": "Generating auto-content...", "es": "generando auto contenido...", "fr": "Génération...", "it": "Generazione contenuto automatico...", "mk": "Создавам автосодржина...", "nb": "Genererer automatisk innhold …", "nl": "Automatische omschrijving laden...", "pl": "Generowanie automatycznego opisu…", "th": "กำลังสร้างเนื้อหาอัตโนมัติ", "tr": "Otomatik içerik oluşturuluyor ...", "vi": "Đang tạo nội dung tự động…"}
+, "in": {
+"cs": "v", "de": "in", "el": "στο", "en": "in", "es": "en", "fr": "à", "it": "in", "mk": "во", "nb": "i", "nl": "in", "pl": "w", "th": "ใน", "vi": "trong"}
+, "in the constellation": {
+"cs": "v souhvězdí", "de": "im Sternbild", "en": "in the constellation", "es": "en la constelación", "it": "nella costellazione", "mk": "во соѕвездието", "nb": "i stjernebildet", "nl": "in het sterrenbeeld", "th": "ในกลุ่มดาว"}
+, "in the field of": {
+"cs": "v oboru", "de": "im Bereich", "en": "in the field of", "es": "en el campo de", "it": "nel campo", "mk": "во полето на", "nb": "i feltet", "nl": "in het domein van", "th": "ในสาขาของ"}
+, "location": {
+"cs": "Poloha", "de": "Lokalität", "el": "Τοποθεσία", "en": "Location", "es": "Ubicación", "fr": "Lieu", "it": "Localizzazione", "lb": "Plaz", "mk": "Место", "nb": "Beliggenhet", "nl": "locatie", "pl": "lokalizacja", "th": "สถานที่ตั้ง", "vi": "Vị trí"}
+, "member of": {
+"cs": "členem", "de": "Mitglied von", "el": "μέλος του", "en": "member of", "es": "miembro de", "fr": "membre de", "it": "membro di", "mk": "член на", "nb": "medlem av", "nl": "lid van", "pl": "członek:", "th": "สมาชิกของ", "vi": "thành viên của"}
+, "named after": {
+"cs": "pojmenováno po", "de": "benannt nach", "en": "named after", "fr": "nommé en référence à", "it": "nominato sulla base di", "mk": "наречено по", "nb": "oppkalt etter", "nl": "genoemd naar", "pl": "nazwano imieniem:", "th": "โดยนามจาก", "vi": "đặt tên theo"}
+, "no_auto_content": {
+"cs": "Neumím odvodit automatický obsah\n", "de": "Kann keine automatische Beschreibung erstellen", "en": "Cannot determine auto-content", "it": "Non è possibile determinare il contenuto automaticamente", "mk": "Не можам да одредам автосодржина", "nb": "Kan ikke bestemme automatisk innhold", "nl": "Kan geen automatische omschrijving genereren", "pl": "Nie można automatycznie wygenerować opisu", "th": "ไม่สามารถกำหนดเนื้อหาอัตโนมัติ", "vi": "Không thể xác định nội dung tự động"}
+, "not_found": {
+"cs": "Nenalezeno", "de": "Nicht gefunden", "el": "Δεν βρέθηκε", "en": "Not found", "es": "no encontrado", "fr": "Introuvable", "it": "Non trovato", "lb": "Net fonnt", "mk": "Непронајдено", "nb": "Ikke funnet", "nl": "Niet gevonden", "pl": "Nie znaleziono", "th": "ไม่พบ", "vi": "Không tìm thấy"}
+, "of": {
+"cs": "z", "de": "von", "en": "of", "es": "de", "fr": "de", "it": "di", "mk": "од", "nb": "av", "nl": "van", "pl": "z", "th": "แห่ง"}
+, "part of": {
+"cs": "část", "de": "Teil von", "el": "μέρος του", "en": "part of", "es": "parte de", "fr": "partie de", "it": "parte di", "mk": "дел од", "nb": "del av", "nl": "onderdeel van", "pl": "stanowi część", "th": "ส่วนหนึ่งของ", "vi": "một phần của"}
+, "person": {
+"cs": "osoba\n", "de": "Person", "el": "Πρόσωπο", "en": "person", "es": "persona", "fr": "être humain", "it": "persona", "lb": "Persoun", "mk": "личност", "nb": "person", "nl": "mens", "pl": "osoba", "th": "บุคคล", "vi": "người"}
+, "produced by": {
+"cs": "vytvořeno", "de": "produziert von", "en": "produced by", "es": "producido por", "fr": "produit par", "it": "prodotto da", "lb": "produzéiert vum", "mk": "произведено од", "nb": "produsert av", "nl": "geproduceerd door", "pl": "wyprodukowany przez", "th": "ผลิตภัณฑ์โดย"}
+, "published in": {
+"cs": "publikováno v", "de": "veröffentlicht in", "en": "published in", "es": "publicado en", "fr": "publié en", "it": "pubblicato da", "mk": "објавено во", "nb": "publisert i", "nl": "gepubliceerd in", "pl": "opublikowany w", "th": "เผยแพร่ใน"}
+, "query_error": {
+"cs": "Chyba dotazu", "de": "Abfrage-Fehler", "en": "Query error", "es": "Error de consulta", "fr": "Erreur de requête", "it": "Errore nell'interrogazione", "mk": "Грешка во барањето", "nb": "Spørringsfeil", "nl": "Query-foutmelding", "pl": "Błąd zapytania", "th": "ข้อผิดพลาดเควียรี", "vi": "Lỗi truy vấn"}
+, "spouse of": {
+"cs": "choť ", "de": "verheiratet mit", "el": "σύζυγος του", "en": "spouse of", "es": "esposa de", "fr": "conjoint de", "it": "coniuge di", "mk": "сопружник на", "nb": "ektefelle til", "nl": "echtgenoot van", "pl": "małżonek osoby:", "th": "คู่สมรสของ", "vi": "vợ/chồng của"}
+, "until": {
+"cs": "do", "de": "bis", "en": "until", "es": "hasta", "it": "fino a", "lb": "bis", "mk": "до", "nb": "til", "nl": "tot", "pl": "dopóki", "th": "จนถึง"}
+, "population": {
+"cs": "populace", "en": "population", "it": "popolazione", "th": "ประชากร"}
+, "about": {
+"cs": "pojednává o", "de": "über", "en": "about", "it": "riguardo", "lb": "Iwwer", "mk": "за алаткава", "nb": "om", "nl": "over", "pl": "opis", "th": "เกี่ยวกับ", "tr": "hakkında"}
+, "from": {
+"cs": "od roku", "de": "von", "el": "από", "en": "from", "es": "de", "fr": "de", "it": "da", "lb": " vum", "mk": "од", "nb": "fra", "nl": "van", "pl": "z", "th": "จาก", "tr": "üzerinden", "vi": "từ"}
+}
+

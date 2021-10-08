@@ -148,7 +148,7 @@ class AutoDesc:
 			"iiurlheight": thumb,
 			"format": 'json'
 		}
-		d = self.wd.getResponse(url, params)
+		d = self.wd.getJsonFromUrl(url, params)
 		for v in d['query']['pages'].values():
 			file = re.sub(r"^File:", "", v["title"])
 			file = re.sub(r"_", " ", file)

@@ -1,4 +1,5 @@
 import re
+import json
 from urllib.parse import urlencode, quote
 from wikidata import WikiData
 from functools import cached_property
@@ -9,26 +10,34 @@ class ShortDescription:
 	def __init__(self, wd=WikiData()):
 		self.wd = wd
 		self.main_languages = ['en', 'de', 'fr', 'es', 'it', 'pl', 'pt', 'ja', 'ru', 'hu', 'nl', 'sv', 'fi']
-		self.api = "https:#www.wikidata.org/w/api.php"
+		self.default_language = self.main_languages[0]
+		self.api = "https://www.wikidata.org/w/api.php"
 		self.q_prefix = "Q"
 		self.p_prefix = "P"
 		self.running = False
 		self.color_not_found = "#FFFFC8"
 		self.language_specific = {}
 
+	# NOTE Occasionally run updateStock() to update the stocks.json file
 	@cached_property
 	def stock(self):
+		with open('stock.json', 'r') as myfile:
+			return json.load(myfile)
+
+	def updateStock(self):
 		ret = {}
 		url = "https://tooltranslate.toolforge.org/data/autodesc/toolinfo.json"
-		j = self.wd.getResponse(url)
+		j = self.wd.getJsonFromUrl(url)
 		for language in j["languages"]:
 			url = f"https://tooltranslate.toolforge.org/data/autodesc/{language}.json"
-			jl = self.wd.getResponse(url)
+			jl = self.wd.getJsonFromUrl(url)
 			for key, value in jl.items():
 				if key not in ret:
 					ret[key] = {}
 				ret[key][language] = value
-		return ret
+		json_object = json.dumps(ret)
+		with open("stock.json", "w") as outfile:
+			outfile.write(json_object)
 
 	def txt(self, k, lang):
 		if k not in self.stock:
@@ -52,23 +61,23 @@ class ShortDescription:
 
 	def modifyWord(self, word, hints, lang):
 		if lang == 'en':
-			if hints.is_female:
+			if "is_female" in hints:
 				if word.lower() == "actor":
 					return "actress"
 				if word.lower() == "actor / actress":
 					return "actress"
-			elif hints.is_male:
+			elif "is_male" in hints:
 				if word.lower() == "actor / actress":
 					return "actor"
 		elif lang == 'fr':
-			if hints.is_female:
+			if "is_female" in hints:
 				if word.lower() == "acteur":
 					return "actrice"
 				if word.lower() == "être humain":
 					return "personne"
 		elif lang == 'de':
-			if hints.is_female:
-				if hints.occupation:
+			if "is_female" in hints:
+				if "occupation" in hints:
 					word += 'in'
 		return word
 
@@ -133,25 +142,24 @@ class ShortDescription:
 		return s[0].upper() + s[1:]
 
 	def getNationalityFromCountry(self, country, claims, hints):
-
 		if hints is None:
 			hints = {}
-		if hints.lang == 'en':
-
-			return self.txt2(country, 'nationality', hints.lang)
-		elif hints.lang == 'de':
-
+		if "lang" not in hints:
+			hints["lang"] = self.default_language
+		if hints["lang"] == 'en':
+			return self.txt2(country, 'nationality', hints["lang"])
+		elif hints["lang"] == 'de':
 			is_female = self.hasPQ(claims, 21, 6581072)
 			append = ''
-			if hints.not_last:
+			if hints["not_last"]:
 				append = ''
 			elif is_female:
 				append = 'e'
 			else:
 				append += 'er'
 
-			name = self.txt2(country, 'nationality', hints.lang)
-			if country in self.language_specific[hints.lang]['nationality']:
+			name = self.txt2(country, 'nationality', hints["lang"])
+			if country in self.language_specific[hints["lang"]]['nationality']:
 				return name + append
 
 			ends = [
@@ -169,7 +177,7 @@ class ShortDescription:
 			return name + append
 
 		else:
-			return self.txt2(country, 'nationality', hints.lang)
+			return self.txt2(country, 'nationality', hints["lang"])
 
 	def isPerson(self, claims):
 		if self.hasPQ(claims, 107, 215627):
@@ -216,7 +224,7 @@ class ShortDescription:
 		sparql += ' wdt:P171* ?taxon . ?taxon wdt:P171 ?parentTaxon . ?taxon wdt:P225 ?taxonName . ?taxon wdt:P105 ?taxonRank . SERVICE wikibase:label { "bd":serviceParam wikibase:language "[AUTO_LANGUAGE],' + \
 				  opt["lang"] + '" } }'
 		url = 'https:#query.wikidata.org/bigdata/namespace/wdq/sparql?format=json&query=' + urlencode(sparql)
-		body = self.wd.getResponse(url)
+		body = self.wd.getJsonFromUrl(url)
 
 		taxa_ranks = {
 			"Q767728": 0,  # variety
@@ -342,7 +350,6 @@ class ShortDescription:
 		return ret
 
 	def describeGeneric(self, q, claims, opt):
-
 		load_items = []
 		self.addItemsFromClaims(claims, 361, load_items)  # Part of
 		self.addItemsFromClaims(claims, 279, load_items)  # Subclass off
@@ -444,9 +451,9 @@ class ShortDescription:
 		i = self.wd.getItem(q)
 		if i is not None:
 			if i.hasClaims('P571'):
-				h.append(', ' + self.txt('from', opt["lang"]) + ' ' + self.getYear(i.raw.claims, 571, opt["lang"]))
+				h.append(', ' + self.txt('from', opt["lang"]) + ' ' + self.getYear(i.raw["claims"], 571, opt["lang"]))
 			if i.hasClaims('P576'):
-				h.append(', ' + self.txt('until', opt["lang"]) + ' ' + self.getYear(i.raw.claims, 576, opt["lang"]))
+				h.append(', ' + self.txt('until', opt["lang"]) + ' ' + self.getYear(i.raw["claims"], 576, opt["lang"]))
 
 		# Origin (group of humans, organizations...)
 		h2 = item_labels["159"].copy() if "159" in item_labels else []
@@ -474,18 +481,20 @@ class ShortDescription:
 	def add2desc(self, h, item_labels, props, opt=None):
 		if opt is None:
 			opt = {}
+		if "hints" not in opt:
+			opt["hints"] = {}
 		h2 = []
 		x = []
 		lang = None
-		if lang is None and opt["lang"] is not None:
+		if lang is None and "lang" in opt:
 			lang = opt["lang"]
-		if lang is None and opt["o"] is not None:
-			lang = opt["o"].lang
-		if lang is None and opt["hints"] is not None and opt["hints"].o is not None:
+		if lang is None and "o" in opt:
+			lang = opt["o"]["lang"]
+		if lang is None and "hints" in opt and "o" in opt["hints"]:
 			lang = opt["hints"]["o"]["lang"]
 		if lang is None:
 			pass  # TODO error?
-		for prop in props.values():
+		for prop in props:
 			if prop in item_labels:
 				x += item_labels[prop]
 		h2 += x
@@ -502,32 +511,34 @@ class ShortDescription:
 			h.append(s)
 
 	def loadItem(self, q, opt):
-		self.load_stock()
 		q = q.upper()
 		opt["q"] = q
 		self.wd.getItemBatch([q])
 		self.main_data = self.wd.items[q].raw
-		claims = self.wd.items[q].raw.claims or []
+		claims = self.wd.items[q].raw["claims"] if "claims" in self.wd.items[q].raw else []
 
 		if self.isPerson(claims):
-			self.describePerson(q, claims, opt)
+			print ("PERSON")
+			return self.describePerson(q, claims, opt)
 		elif self.isTaxon(claims):
-			self.describeTaxon(q, claims, opt)
+			print ("TAXON")
+			return self.describeTaxon(q, claims, opt)
 		elif self.isDisambig(claims):
-			self.setTarget(opt, self.txt("disambig", opt["lang"]), q)
+			print ("DISAMBIg`")
+			return self.setTarget(opt, self.txt("disambig", opt["lang"]), q)
 		else:
+			print ("GENERIC")
 			return self.describeGeneric(q, claims, opt)
 
 	def isDisambig(self, claims):
-
 		return (self.hasPQ(claims, 107, 11651459))
 
 	def hasPQ(self, claims, p, q):
 		# p,q numerical
-		p = self.p_prefix + p
+		p = self.p_prefix + str(p)
 		if p not in claims:
 			return False
-		for v in claims[p].values():
+		for v in claims[p]:
 			if "mainsnak" not in v:
 				return False
 			if "datavalue" not in v["mainsnak"]:
@@ -543,10 +554,10 @@ class ShortDescription:
 
 	def addItemsFromClaims(self, claims, p, items):
 		# p numerical
-		prefixed = self.p_prefix + p
+		prefixed = self.p_prefix + str(p)
 		if prefixed not in claims:
 			return
-		for v in claims[prefixed].values():
+		for v in claims[prefixed]:
 			if "mainsnak" not in v:
 				return
 			if "datavalue" not in v["mainsnak"]:
@@ -556,15 +567,15 @@ class ShortDescription:
 			if "numeric-id" not in v["mainsnak"]["datavalue"]["value"]:
 				items.append([p, 'P' + re.sub("\D", "", str(p))])
 			else:
-				items.append([p, self.q_prefix + v["mainsnak"]["datavalue"]["value"]["numeric-id"]])
+				items.append([p, self.q_prefix + str(v["mainsnak"]["datavalue"]["value"]["numeric-id"])])
 
 	def getYear(self, claims, p, lang):
 		# p numerical
-		p = self.p_prefix + p
+		p = self.p_prefix + str(p)
 		if p not in claims:
 			return ''
 		ret = ''
-		for v in claims[p].values():
+		for v in claims[p]:
 			if "mainsnak" not in v:
 				return
 			if "datavalue" not in v["mainsnak"]:
@@ -584,8 +595,15 @@ class ShortDescription:
 	def labelItems(self, items, opt=None):
 		if len(items) == 0:
 			return {}
+
+		# Sanitize options
 		if opt is None:
 			opt = {}
+		if "lang" not in opt:
+			opt["lang"] = self.default_language
+		if "links" not in opt:
+			opt["links"] = "wikidata"
+
 		use_lang = opt["lang"]
 
 		i = []
@@ -613,9 +631,9 @@ class ShortDescription:
 			if curlang not in v["labels"]:
 				continue
 			p = q
-			for v in items:
-				if v[1] == q:
-					p = v[0]
+			for value in items:
+				if value[1] == q:
+					p = value[0]
 
 			if p == 31:
 				if q == 'Q5':
