@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+</head>
+<body>
+
+<h1>AutoDesc - Wikidata automated description API</h1>
+<p>This API can describe most Wikidata items automatically. For some item types (e.g. biographies) in some languages, long descriptions are available.
+<a href='http://magnusmanske.de/wordpress/?p=265'>Blog entry,</a>
+<a href='https://bitbucket.org/magnusmanske/autodesc'>code repo</a>,
+<a href='https://tools.wmflabs.org/tooltranslate/#tool=27'>translations</a>.
+</p>
+
+<!--
+<h2>Parameters</h3>
+<ul>
+<li><b>q</b> The Q number of the item to describe. <i>Mandatory.</i></li>
+<li><b>lang</b> Language code for description (default: <i>en</i>)</li>
+<li><b>mode</b>: <i>long</i> or <i>short</i> (default) description text. Long descriptions are only available for some languages and item types; short descriptions will be used as a fallback.</li>
+<li><b>links</b> How to render links (also implies result markup in general)
+<ul>
+<li><i>parameter not used</i>: plain text (default)</li>
+<li><i>wikipedia</i>: HTML, with links to the Wikipedia edition specified in <tt>lang</tt></li>
+<li><i>wikidata</i>: HTML, with links to Wikidata</li>
+<li><i>reasonator</i>: HTML, with links to Reasonator </li>
+<li><i>wiki</i>: Wiki text, with links to the Wikipedia edition specified in <tt>lang</tt></li>
+</ul>
+</li>
+<li><b>linktarget</b> target frame of HTML links (e.g. <i>_blank</i> to open links in a new tab)</li>
+</ul>
+<h2>Example form</h2>
+-->
+
+<div>
+<form method='get' action='?'>
+<p>Q <input type='text' name='q' placeholder='Q number' /> &nbsp; Language <input type='text' name='lang' placeholder='language code; en' /></p>
+<p>Mode
+<label><input type='radio' name='mode' value='short' checked /> short</label>
+<label><input type='radio' name='mode' value='long' /> long</label>
+description (where possible)
+</p>
+
+<p>Links
+<label><input type='radio' name='links' value='text' checked /> plain text</label>
+<label><input type='radio' name='links' value='wikidata' /> HTML/Wikidata</label>
+<label><input type='radio' name='links' value='wikipedia' /> HTML/Wikipedia</label>
+<label><input type='radio' name='links' value='wiki' /> Wikitext/Wikipedia</label>
+<label><input type='radio' name='links' value='reasonator' /> HTML/Reasonator</label>
+</p>
+
+<p>Redlinks
+<label><input type='radio' name='redlinks' value='' checked /> Plain text</label>
+<label><input type='radio' name='redlinks' value='autodesc' /> AutoDesc</label>
+<label><input type='radio' name='redlinks' value='reasonator' /> Reasonator</label>
+<i>For HTML/Wikipedia links with no corresponding Wikipedia page; long desc only</i>
+</p>
+
+<p>Format
+<label><input type='radio' name='format' value='json' /> JSON <small>(takes &callback)</small></label>
+<label><input type='radio' name='format' value='jsonfm' checked /> Pretty JSON</label>
+<label><input type='radio' name='format' value='html' /> HTML page</label>
+</p>
+
+<p>
+Infobox
+<label><input type='radio' name='get_infobox' value='yes' checked /> Yes</label>
+<label><input type='radio' name='get_infobox' value='' /> No</label>
+<input type='text' name='infobox_template' placeholder='Template name; leave blank for auto-detect' style='width:200pt' />
+<small>(for wikitext output only)</small>
+</p>
+
+<!--<p>Link target <input type='text' name='linktarget' placeholder='_blank' /></p>-->
+<p><input type='submit' value='Get description' /></p>
+</form>
+
+<p>Examples:
+<ul>
+<li><a href='?q=Q1339&links=wikipedia&lang=en&mode=long&format=html&redlinks=reasonator'>Long English description of J.S.Bach, as a HTML page linking to English Wikipedia, and en.wp redlinks to Reasonator</a></li>
+<li><a href='?q=Q311243&lang=&mode=long&links=wiki&redlinks=&format=html&get_infobox=yes'>Wanderer above the Sea of Fog</a> as wikitext, with {{Infobox artwork}}</li>
+</p>
+</div>
+
+</body>
+</html>

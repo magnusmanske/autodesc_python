@@ -1,0 +1,73 @@
+[
+
+{
+"wiki":"enwiki",
+"conditions":{"P31":["Q5"]},
+"template":"Infobox person",
+"params":[
+	{"name":"name","value":"label" },
+	{"name":"image","value":"P18","max":1},
+	{"name":"birth_date","value":"P569"},
+	{"name":"birth_place","value":"P19"},
+	{"name":"death_date","value":"P570"},
+	{"name":"death_place","value":"P20"},
+	{"name":"nationality","value":"P27"},
+	{"name":"other_names","value":"alias"},
+	{"name":"occupation","value":"P106"},
+	{"name":"resting_place","value":"P119","minor":true},
+	{"name":"death_cause","value":"P509","minor":true},
+	{"name":"alma_mater","value":"P69","minor":true},
+	{"name":"employer","value":"P108","minor":true},
+	{"name":"spouse","value":"P26","minor":true},
+	{"name":"children","value":"P40","minor":true},
+	{"name":"relatives","value":"P1038","minor":true},
+	{"name":"awards","value":"P166","minor":true}
+]
+} ,
+
+
+{
+"wiki":"enwiki",
+"template":"Infobox artwork",
+"conditions":{"P31":["Q3305213"]},
+"params":[
+	{"name":"title","value":"label"},
+	{"name":"painting_alignment","value":""},
+	{"name":"other_language_1","value":""},
+	{"name":"other_title_1","value":""},
+	{"name":"other_language_2","value":""},
+	{"name":"other_title_2","value":""},
+	{"name":"image_file","value":"P18"},
+	{"name":"image_size","value":""},
+	{"name":"alt","value":""},
+	{"name":"caption","value":""},
+	{"name":"artist","value":"P170"},
+	{"name":"catalogue","value":""},
+	{"name":"year","value":""},
+	{"name":"completion_date","value":"P571"},
+	{"name":"type","value":"P136"},
+	{"name":"material","value":"P186"},
+	{"name":"subject","value":"P180","max":1},
+	{"name":"height_metric","value":""},
+	{"name":"width_metric","value":""},
+	{"name":"length_metric","value":""},
+	{"name":"diameter_metric","value":""},
+	{"name":"height_imperial","value":""},
+	{"name":"width_imperial","value":""},
+	{"name":"length_imperial","value":""},
+	{"name":"diameter_imperial","value":""},
+	{"name":"dimensions","value":""},
+	{"name":"dimensions_ref","value":""},
+	{"name":"metric_unit","value":""},
+	{"name":"imperial_unit","value":""},
+	{"name":"condition","value":""},
+	{"name":"city","value":""},
+	{"name":"museum","value":"P195"},
+	{"name":"accession","value":"P217"},
+	{"name":"coordinates","value":""},
+	{"name":"owner","value":""},
+	{"name":"url","value":"P856","minor":true}
+]
+}
+
+]
