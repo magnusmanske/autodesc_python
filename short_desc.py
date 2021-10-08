@@ -1,54 +1,7 @@
 import re
 from urllib.parse import urlencode, quote
 from wikidata import WikiData
-
-""""
-/* self script can display automated Wikidata item descriptions.
-
-DEV WARNING: The code hosted here also runs OUTSIDE of mediawiki scopes on toollabs.
-Thus if you need something from the MediaWiki context, wrap your code in a check
-for the wd_auto_desc.mediawiki boolean.
-
-USERS:
-
-To add self to your common.js page:
-
- mw.loader.load("#en.wikipedia.org/w/index.php?title=MediaWiki:Wdsearch-autodesc.js&action=raw&ctype=text/javascript")
-
-On Wikidata, to always show the automatic description, even if there is a manual one, add the following line to your common.js page:
-
- wd_auto_desc_wd_always_show = True
-
-# PROGRAMMER ACCESS
-# Get a single item label
-
-wd_auto_desc.labelItem ( "Q123" , function ( label ) {
-	 # "label" now contains the item label
-} )
-
-# Get a description
-
-wd_auto_desc.loadItem ( "Q123" , {
-	target:$('#desc') , # OPTIONAL: item to put the resulting HTML into
-	def callback (self, q , html , opt ) :
-		 # OPTIONAL: callback with the resulting HTML
-		# q is the original item ID ("Q123"), html contains the description
-
-	links : 'wikidata' , # OPTIONAL: 'wikidata' for links to wikidata, 'wikipedia' for links to the current language wikipedia (plain text otherwise)
-	linktarget : '_blank' # OPTIONAL: For links, <a target='linktarget'>
-
-} )
-
-# ON WIKIDATA :
-
-To load, but not run automatically, set
-
-prevent_wd_auto_desc = 1
-
-BEFORE including the script
-
-*/
-"""
+from functools import cached_property
 
 
 class ShortDescription:
@@ -61,63 +14,21 @@ class ShortDescription:
 		self.p_prefix = "P"
 		self.running = False
 		self.color_not_found = "#FFFFC8"
-		self.stock_loaded = False
-		self.load_stock_running = 0
-		self.stock = {}
 		self.language_specific = {}
 
-	def load_stock(self, the_callback):
-		pass  # TODO
-
-	"""
-		me = self
-		if me.stock_loaded:
-			return the_callback() # Already loaded
-		if me.load_stock_running > 0:
- # Already loading, just wait
-			setTimeout ( function () {me.load_stock(the_callback)} , 500 )
-			return
-		}
-
-		server = 'tools-static.wmflabs.org' #'208.80.155.174'
-
-		request({
-			url: 'https:#'+server+'/tooltranslate/data/autodesc/toolinfo.json',
-			headers: {'user-agent': 'Mozilla/5.0'},
-			json: True
-		}, function (error, response, d) {
-
-			if not error and response.statusCode === 200:
-
-			myUrls = []
-			$.each ( d.languages , function ( k0 , language ) {
-				myUrls.append ( { "url":'https:#'+server+'/tooltranslate/data/autodesc/'+language+'.json', "json":True, "headers": {'user-agent': 'Mozilla/5.0'}, "language":language} )
-			} )
-			me.load_stock_running = len(myUrls)
-
-			async.map(myUrls, function(url, callback) {
-			 request(url, function(error, response, d2) {
-				# Some processing is happening here before the callback is invoked
-				$.each ( d2 , function ( k1 , v1 ) {
-					if me.stock[k1] is None:
-						me.stock[k1] = {}
-					me.stock[k1][url.language] = v1
-				} )
-				me.load_stock_running--
-
-				if me.load_stock_running <= 0:
-
-					me.stock_loaded = True
-					the_callback()
-				}
-			 })
-			}, function(err, results) {
-				console.log ( "ERROR" , err , results )
-			})
-
-			} else console.log ( "Translations unavailable" , error , response )
-		} )
-	"""
+	@cached_property
+	def stock(self):
+		ret = {}
+		url = "https://tooltranslate.toolforge.org/data/autodesc/toolinfo.json"
+		j = self.wd.getResponse(url)
+		for language in j["languages"]:
+			url = f"https://tooltranslate.toolforge.org/data/autodesc/{language}.json"
+			jl = self.wd.getResponse(url)
+			for key, value in jl.items():
+				if key not in ret:
+					ret[key] = {}
+				ret[key][language] = value
+		return ret
 
 	def txt(self, k, lang):
 		if k not in self.stock:
@@ -294,7 +205,7 @@ class ShortDescription:
 			ret = [ret.group(0), ret.group(1), ret.group(2), ret.group(3)]
 		return ret
 
-	def removeEntityPrefix(self,s):
+	def removeEntityPrefix(self, s):
 		return re.sub(r"^.+?entity#", "", str(s))
 
 	# taxon_q = x.taxon["value"].replace ( /^.+?entity\# , '' )
@@ -387,12 +298,14 @@ class ShortDescription:
 
 		# Occupation
 		ol = len(h)
-		self.add2desc(h, item_labels, [31, 106],{"hints": {"is_male": is_male, "is_female": is_female, "occupation": True, "o": opt}})
+		self.add2desc(h, item_labels, [31, 106],
+					  {"hints": {"is_male": is_male, "is_female": is_female, "occupation": True, "o": opt}})
 		if len(h) == ol:
 			h.append(self.txt('person', opt["lang"]))
 
 		# Office
-		self.add2desc(h, item_labels, [39],{"hints": {"is_male": is_male, "is_female": is_female, "office": True}, "prefix": ',', "o": opt})
+		self.add2desc(h, item_labels, [39],
+					  {"hints": {"is_male": is_male, "is_female": is_female, "office": True}, "prefix": ',', "o": opt})
 
 		# Dates
 		born = self.getYear(claims, 569, opt["lang"])

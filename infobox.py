@@ -5,8 +5,8 @@ from wikidata import WikiData
 
 class InfoboxGenerator:
 
-	def __init__(self):
-		self.wd = WikiData()
+	def __init__(self, wd=WikiData()):
+		self.wd = wd
 		self.infoboxes = []
 		self.no_infobox_string = ""
 		with open("infoboxes.json") as f:
