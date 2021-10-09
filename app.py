@@ -30,7 +30,7 @@ def api():
 	if args["lang"] == "any" or args["lang"] == "":
 		args["lang"] = default_language
 	if args["q"] is None or args["q"] == "":
-		return html()
+		return index_html()
 
 	if args["q"].isnumeric():
 		q = f"Q{args['q']}"
@@ -39,9 +39,13 @@ def api():
 	args["q"] = q
 	# TODO check pattern Qxxx
 
-	wd = WikiData()
-	sd = ShortDescription(wd)
-	result = sd.loadItem(q, args)
+	try:
+		wd = WikiData()
+		sd = ShortDescription(wd)
+		result = sd.loadItem(q, args)
+	except:
+		result = [q, "<i>Automatic description is not available</i>"]
+
 	j = {
 		"call": original_args,
 		"q": args["q"],
@@ -50,7 +54,7 @@ def api():
 		"result": result[1]
 	}
 
-	if args["format"]=="html":
+	if args["format"] == "html":
 		html = html_header
 		html += "<style>a.redlink { color:red }</style>"
 		html += "<h1>" + j["label"] + " (<a href='//www.wikidata.org/wiki/" + q + "'>" + q + "</a>)</h1>"
@@ -61,16 +65,16 @@ def api():
 		html += "<hr/><div style='font-size:8pt;'>This text was generated automatically from Wikidata using <a href='/autodesc/?'>AutoDesc</a>.</div>"
 		html += "</body></html>"
 		return html
-	elif args["format"]=="jsonfm":
+	elif args["format"] == "jsonfm":
 		json_link = []
-		for (k,v) in args.items():
-			json_link.append ( k + "=" + escape ( "json" if k=="format" else v ) )
+		for (k, v) in args.items():
+			json_link.append(k + "=" + escape("json" if k == "format" else v))
 		json_link = "<a href='?" + "&".join(json_link) + "'>format=json</a>"
 		html = html_header
 		html += "<p>You are looking at the HTML representation of the JSON format. HTML is good for debugging, but is unsuitable for application use.</p>"
 		html += "<p>Specify the format parameter to change the output format. To see the non-HTML representation of the JSON format, set " + json_link + ".</p>"
 		html += "<hr/><pre style=\"white-space:pre-wrap\">"
-		html += json.dumps(j,indent=4) ;
+		html += json.dumps(j, indent=4);
 		html += "</pre>"
 		html += "</body></html>"
 		return html
@@ -78,7 +82,7 @@ def api():
 		return jsonify(j)
 
 
-def html():
+def index_html():
 	with open("index.html", "r") as file:
 		data = file.read()
 		return data

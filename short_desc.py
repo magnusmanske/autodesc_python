@@ -671,12 +671,12 @@ class ShortDescription:
 					cb[p].append("" + label + "")  # TODO {{redwd}}
 			elif opt["links"] == 'wikipedia' and "sitelinks" in v and wiki in v["sitelinks"]:
 				page = self.wikiUrlencode(v["sitelinks"][wiki]["title"])
-				if opt["local_links"]:
+				if "local_links" in opt:
 					cb[p].append("<a href='/wiki/" + page + "'" + linktarget + ">" + label + "</a>")
 				else:
 					cb[p].append(
 						"<a href='#" + use_lang + ".wikipedia.org/wiki/" + page + "'" + linktarget + ">" + label + "</a>")
-			elif opt["links"] != '' and "sitelinks" in v and use_lang + opt["links"] in v["sitelinks"]:
+			elif "links" in opt and opt["links"] != '' and "sitelinks" in v and use_lang + opt["links"] in v["sitelinks"]:
 				page = self.wikiUrlencode(v["sitelinks"][use_lang + opt["links"]].title)
 				if "local_links" in opt:
 					cb[p].append("<a href='/wiki/" + page + "'" + linktarget + ">" + label + "</a>")
@@ -689,7 +689,7 @@ class ShortDescription:
 
 	def wikiUrlencode(self, s):
 		ret = re.sub(" ", "_", s)
-		return quote(ret)
+		return urllib.parse.quote(ret)
 
 	def labelItem(self, q, opt):
 		item_labels = self.labelItems([[0, q]], opt)
