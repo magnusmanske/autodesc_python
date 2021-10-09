@@ -87,4 +87,4 @@ def html():
 # api.add_resource(All, "/")
 
 if __name__ == "__main__":
-	app.run(port=5002)
+	app.run()
