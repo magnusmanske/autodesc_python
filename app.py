@@ -7,8 +7,14 @@ from flask import jsonify
 from html import escape
 from wikidata import WikiData
 from short_desc import ShortDescription
+from dotenv import load_dotenv
+
+dotenv_path = '/data/project/autodesc/www/python/.env'
+load_dotenv(dotenv_path)
 
 app = Flask(__name__)
+app.config["FLASK_ENV"] = "development"
+
 html_header = "<!DOCTYPE html><html><head><meta charset=\"utf-8\"> </head><body>"
 default_language = "en"
 
@@ -87,8 +93,5 @@ def index_html():
 		data = file.read()
 		return data
 
-
-# api.add_resource(All, "/")
-
 if __name__ == "__main__":
-	app.run()
+	app.run(debug=True)
