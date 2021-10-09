@@ -1,6 +1,6 @@
 import re
 import json
-from urllib.parse import urlencode, quote
+import urllib
 from wikidata import WikiData
 from functools import cached_property
 
@@ -40,11 +40,11 @@ class ShortDescription:
 			outfile.write(json_object)
 
 	def txt(self, k, lang):
-		if k not in self.stock:
+		if k in self.stock:
 			if lang in self.stock[k]:
 				return self.stock[k][lang]
 			return self.stock[k]['en']
-		return '???'
+		return f"[{k}]"
 
 	def txt2(self, t, k, lang):
 		if lang not in self.language_specific:
@@ -59,24 +59,30 @@ class ShortDescription:
 			return t
 		return m[1] + self.language_specific[lang][k][k2] + m[3]
 
+	def is_female(self, hints):
+		return "is_female" in hints and hints["is_female"]
+
+	def is_male(self, hints):
+		return "is_male" in hints and hints["is_male"]
+
 	def modifyWord(self, word, hints, lang):
 		if lang == 'en':
-			if "is_female" in hints:
+			if self.is_female(hints):
 				if word.lower() == "actor":
 					return "actress"
 				if word.lower() == "actor / actress":
 					return "actress"
-			elif "is_male" in hints:
+			elif self.is_male(hints):
 				if word.lower() == "actor / actress":
 					return "actor"
 		elif lang == 'fr':
-			if "is_female" in hints:
+			if self.is_female(hints):
 				if word.lower() == "acteur":
 					return "actrice"
 				if word.lower() == "être humain":
 					return "personne"
 		elif lang == 'de':
-			if "is_female" in hints:
+			if self.is_female(hints):
 				if "occupation" in hints:
 					word += 'in'
 		return word
@@ -221,9 +227,9 @@ class ShortDescription:
 	def describeTaxon(self, q, claims, opt):
 		load_items = []
 		sparql = "SELECT ?taxon ?taxonRank ?taxonRankLabel ?parentTaxon ?taxonLabel ?taxonName { wd:" + q
-		sparql += ' wdt:P171* ?taxon . ?taxon wdt:P171 ?parentTaxon . ?taxon wdt:P225 ?taxonName . ?taxon wdt:P105 ?taxonRank . SERVICE wikibase:label { "bd":serviceParam wikibase:language "[AUTO_LANGUAGE],' + \
-				  opt["lang"] + '" } }'
-		url = 'https:#query.wikidata.org/bigdata/namespace/wdq/sparql?format=json&query=' + urlencode(sparql)
+		sparql += ' wdt:P171* ?taxon . ?taxon wdt:P171 ?parentTaxon . ?taxon wdt:P225 ?taxonName . ?taxon wdt:P105 ?taxonRank . '
+		sparql += 'SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],'+opt["lang"]+'". } }'
+		url = 'https://query.wikidata.org/bigdata/namespace/wdq/sparql?format=json&query=' + urllib.parse.quote(sparql)
 		body = self.wd.getJsonFromUrl(url)
 
 		taxa_ranks = {
@@ -241,7 +247,7 @@ class ShortDescription:
 		taxon_name = None
 		taxa_cache = []
 		load_items = []
-		for num, x in enumerate(body.results.bindings):
+		for num, x in enumerate(body["results"]["bindings"]):
 			taxon_q = self.removeEntityPrefix(x["taxon"]["value"])
 			taxon_rank = self.removeEntityPrefix(x["taxonRank"]["value"])
 			if taxon_q == q:
@@ -293,7 +299,7 @@ class ShortDescription:
 
 		# Nationality
 		h2 = ''
-		tmp = [] if item_labels["27"] is None else item_labels["27"]
+		tmp = item_labels["27"] if "27" in item_labels else []
 		for k, v in enumerate(tmp):
 			v2 = self.splitLink(v)
 			s = self.getNationalityFromCountry(v2[2], claims, {"lang": opt["lang"], "not_last": (k + 1 != len(tmp))})
@@ -319,7 +325,6 @@ class ShortDescription:
 		born = self.getYear(claims, 569, opt["lang"])
 		died = self.getYear(claims, 570, opt["lang"])
 		if born != '' and died != '':
-
 			h.append(' (' + born + '–' + died + ')')
 		elif born != '':
 			h.append(' (*' + born + ')')
@@ -510,7 +515,15 @@ class ShortDescription:
 					s = self.txt(opt["txt_key"], lang) + ' ' + s
 			h.append(s)
 
-	def loadItem(self, q, opt):
+	def loadItem(self, q, opt = None):
+		# Sanitize options
+		if opt is None:
+			opt = {}
+		if "lang" not in opt:
+			opt["lang"] = self.default_language
+		if "links" not in opt:
+			opt["links"] = "wikidata"
+
 		q = q.upper()
 		opt["q"] = q
 		self.wd.getItemBatch([q])
@@ -577,16 +590,16 @@ class ShortDescription:
 		ret = ''
 		for v in claims[p]:
 			if "mainsnak" not in v:
-				return
+				continue
 			if "datavalue" not in v["mainsnak"]:
-				return
+				continue
 			if "value" not in v["mainsnak"]["datavalue"]:
-				return
+				continue
 			if "time" not in v["mainsnak"]["datavalue"]["value"]:
-				return
+				continue
 			m = re.match("^ ([+-])0 * (\d+) ", v["mainsnak"]["datavalue"]["value"]["time"])
 			if m is None:
-				return
+				continue
 			ret = m[2]
 			if m[1] == '-':
 				ret += self.txt('BC', lang)
@@ -595,14 +608,6 @@ class ShortDescription:
 	def labelItems(self, items, opt=None):
 		if len(items) == 0:
 			return {}
-
-		# Sanitize options
-		if opt is None:
-			opt = {}
-		if "lang" not in opt:
-			opt["lang"] = self.default_language
-		if "links" not in opt:
-			opt["links"] = "wikidata"
 
 		use_lang = opt["lang"]
 
@@ -648,7 +653,7 @@ class ShortDescription:
 			label = v["labels"][curlang]["value"]
 			linktarget = "" if "linktarget" not in opt else " target='" + opt["linktarget"] + "'"
 			if opt["links"] == 'wikidata':
-				cb[p].append("<a href='#www.wikidata.org/wiki/" + q + "'" + linktarget + ">" + label + "</a>")
+				cb[p].append("<a href='https://www.wikidata.org/wiki/" + q + "'" + linktarget + ">" + label + "</a>")
 			elif opt["links"] == 'reasonator_local':
 				cb[p].append(
 					"<a href='?lang=" + opt["reasonator_lang"] + "&q=" + q + "'" + linktarget + ">" + label + "</a>")
