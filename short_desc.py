@@ -593,7 +593,7 @@ class ShortDescription:
 				continue
 			if "time" not in v["mainsnak"]["datavalue"]["value"]:
 				continue
-			m = re.match("^ ([+-])0 * (\d+) ", v["mainsnak"]["datavalue"]["value"]["time"])
+			m = re.match("^([+-])0*(\d+)", v["mainsnak"]["datavalue"]["value"]["time"])
 			if m is None:
 				continue
 			ret = m[2]

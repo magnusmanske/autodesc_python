@@ -34,5 +34,8 @@ def test_short_description():
 	desc = sd.loadItem("Q4504",{"links":"wiki"})
 	assert(desc[1]=="[[Species|species]], named after [[Komodo (island)|Komodo]] of [[Monitor lizard|Varanus]]")
 
-test_wikidata()
-test_short_description()
+#test_wikidata()
+#test_short_description()
+sd = ShortDescription()
+desc = sd.loadItem("Q74764",{"links":"text"})
+print (desc)
