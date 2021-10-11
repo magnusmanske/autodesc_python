@@ -7,10 +7,6 @@ from flask import jsonify
 from html import escape
 from wikidata import WikiData
 from short_desc import ShortDescription
-#from dotenv import load_dotenv
-
-#dotenv_path = '/data/project/autodesc/www/python/.env'
-#load_dotenv(dotenv_path)
 
 app = Flask(__name__)
 app.config["FLASK_ENV"] = "development"
@@ -31,6 +27,7 @@ def api():
 	parser.add_argument("format", type=str, default="jsonfm")  # jsonfm/json/html
 	parser.add_argument("get_infobox", type=str, default="yes")  # yes/""
 	parser.add_argument("infobox_template", type=str, default="")
+	parser.add_argument("callback", type=str, default=None)
 	args = parser.parse_args()
 	original_args = args.copy()
 	if args["lang"] == "any" or args["lang"] == "":
@@ -85,13 +82,17 @@ def api():
 		html += "</body></html>"
 		return html
 	else:
-		return jsonify(j)
+		if "callback" in args:
+			return args["callback"]+"("+json.dumps(j)+")"
+		else:
+			return jsonify(j)
 
 
 def index_html():
 	with open("index.html", "r") as file:
 		data = file.read()
 		return data
+
 
 if __name__ == "__main__":
 	app.run(debug=True)
