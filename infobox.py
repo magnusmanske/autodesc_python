@@ -20,46 +20,52 @@ class InfoboxGenerator:
 		wiki = o["lang"] if "lang" in o else "en"
 		wiki += "wiki"
 
-		if "template" in o and o["template"] != "":
-			template = self.ucfirst(re.sub(r"_", " ", o["template"]))
+		if "template" in o and o["infobox_template"] != "":
+			template = self.ucfirst(re.sub(r"_", " ", o["infobox_template"]))
 			for v in self.infoboxes:
-				if v.wiki != wiki:
+				if v["wiki"] != wiki:
 					continue
-				if self.ucfirst(re.sub(r"_", " ", v["template"]) != template):
+				if self.ucfirst(re.sub(r"_", " ", v["infobox_template"]) != template):
 					continue
 				return v
 
 		# Try auto-detect based on conditions
 
 		for v in self.infoboxes:
-			if v.wiki != wiki:
+			print (v)
+			if v["wiki"] != wiki:
 				continue
 			conditions = v["conditions"] if "conditions" in v else {}
 			for (check_p, check_qs) in conditions.items():
 				q_list = self.wd.items[o["q"]].getClaimItemsForProperty(check_p, True)
-				for check_q in check_qs.values():
+				for check_q in check_qs:
 					if check_q in q_list:
 						continue
 					return v
 
 	def get_filled_infobox(self, options):
-		q = options.q
+		q = options["q"]
 		lang = options["lang"] if "lang" in options else "en"
-		q = "Q" + re.sub(r"\D", "", str(q))
+		q = self.wd.sanitizeQ(q)
 		self.wd.getItemBatch([q])
+		item = self.wd.getItem(q)
+		if item is None:
+			return ""
 		ib = self.find_infobox(options)
 		if ib is None:
 			return self.no_infobox_string  # No matching infobox found, blank string returned
 
 		items2load = []
-		for param in ib.params.values():
+		for param in ib["params"]:
 			if "value" not in param or param["value"] == "":
 				continue
 			if re.match(r"^P\d+", param["value"]):
-				claims = self.wd.items[q]["raw"]["claims"][param["value"]]
+				if param["value"] not in item.raw["claims"]:
+					continue
+				claims = item.raw["claims"][param["value"]]
 				if claims is None:
 					continue
-				for v in claims.values():
+				for v in claims:
 					if "mainsnak" in v:
 						if "datatype" in v["mainsnak"]:
 							if v["mainsnak"]["datatype"] == "wikibase-item":
@@ -70,28 +76,28 @@ class InfoboxGenerator:
 
 		self.wd.getItemBatch(items2load)
 
-		rows = ["{{" + ib.template]
+		rows = ["{{" + ib["template"]]
 
-		for param in ib.params.values():
+		for param in ib["params"]:
 			if "value" not in param or param["value"] == "":
 				continue
 			pre = param["pre"] if "pre" in param else ""
 			post = param["post"] if "post" in param else ""
 			sep = param["sep"] if "sep" in param else ""
 			if param["value"] == "label":
-				rows.append("| " + param["name"] + " = " + pre + self.wd.items[q].getLabel() + post)
+				rows.append("| " + param["name"] + " = " + pre + item.getLabel() + post)
 			elif param["value"] == "alias":
-				s = self.wd.items[q].getAliasesForLanguage(lang, False)
+				s = item.getAliasesForLanguage(lang, False)
 				parts = []
-				for v in s.values():
+				for v in s:
 					parts.append(pre + v + post)
 				rows.append("| " + param["name"] + " = " + sep.join(parts))
 			elif re.match(r"^P\d+", param["value"]):
-				claims = self.wd.items[q].raw.claims[param["value"]] if param["value"] in self.wd.items[
-					q].raw.claims else []
+				claims = item.raw["claims"][param["value"]] if param["value"] in self.wd.items[
+					q].raw["claims"] else []
 				parts = []
 				cnt = 0
-				for (k, v) in claims.items():
+				for v in claims:
 					if v["mainsnak"]["datatype"] == "commonsMedia":
 						parts.append(pre + v["mainsnak"]["datavalue"]["value"] + post)
 					elif v["mainsnak"]["datatype"] == "string":
@@ -99,7 +105,7 @@ class InfoboxGenerator:
 					elif v["mainsnak"]["datatype"] == "url":
 						parts.append(pre + v["mainsnak"]["datavalue"]["value"] + post)
 					elif v["mainsnak"]["datatype"] == "time":
-						time = self.wd.items[q].getClaimDate(v)
+						time = item.getClaimDate(v)
 						precision = time.precision
 						time = time.time
 						era = "BCE" if re.match(r"^-", time) else ""
@@ -132,11 +138,11 @@ class InfoboxGenerator:
 					if cnt >= param["max"]:
 						break
 
-				if param["minor"] and len(parts) == 0:
+				if "minor" in param and param["minor"] and len(parts) == 0:
 					return
 				rows.append("| " + param["name"] + " = " + sep.join(parts))
 			else:
-				if param["minor"]:
+				if "minor" in param and param["minor"]:
 					continue
 				rows.append("| " + param["name"] + " = ")
 

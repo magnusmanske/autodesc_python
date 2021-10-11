@@ -61,8 +61,8 @@ class WikiDataItem:
 		aliases = {}
 		raw_aliases = {} if self.raw["aliases"] is None else self.raw["aliases"]
 		for (lang, v1) in raw_aliases.items():
-			for v2 in v1.values():
-				aliases[v2.value] = 1
+			for v2 in v1:
+				aliases[v2["value"]] = 1
 
 		if include_labels:
 			raw_labels = {} if self.raw["labels"] is None else self.raw["labels"]
@@ -75,8 +75,8 @@ class WikiDataItem:
 		aliases = {}
 		raw_aliases = self.raw["aliases"] if "aliases" in self.raw else {}
 		v1 = raw_aliases[lang] if lang in raw_aliases else {}
-		for v2 in v1.values():
-			aliases[v2.value] = 1
+		for v2 in v1:
+			aliases[v2["value"]] = 1
 
 		if include_labels:
 			raw_labels = self.raw["labels"] if "labels" in self.raw else {}
@@ -208,7 +208,7 @@ class WikiDataItem:
 			break
 		return ret
 
-	def getLabel(self, language):
+	def getLabel(self, language=None):
 		label = self.getID()  # Fallback
 		if language is None:
 			found = False
@@ -386,6 +386,12 @@ class WikiData:
 			return fallback
 		return "; ".join(a)
 
+	def sanitizeQ(self, q):
+		q = str(q)
+		if q.isnumeric():
+			q = "Q" + q
+		return q
+
 	def getItemBatch(self, item_list, props=None):
 		if props is None:
 			props = self.default_props
@@ -395,9 +401,7 @@ class WikiData:
 		max_per_batch = self.max_get_entities
 		hadthat = {}
 		for q in item_list:
-			q = str(q)
-			if q.isnumeric():
-				q = "Q" + q
+			q = self.sanitizeQ(q)
 			if q in self.items or q in hadthat:
 				continue  # Have that one
 			hadthat[q] = 1

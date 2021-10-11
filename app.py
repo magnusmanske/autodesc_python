@@ -7,6 +7,7 @@ from flask import jsonify
 from html import escape
 from wikidata import WikiData
 from short_desc import ShortDescription
+from infobox import InfoboxGenerator
 
 app = Flask(__name__)
 app.config["FLASK_ENV"] = "development"
@@ -49,6 +50,12 @@ def api():
 	except:
 		result = [q, "<i>Automatic description is not available</i>"]
 
+	if args["links"] == "wiki" and args["get_infobox"] == "yes":
+		ig = InfoboxGenerator(wd)
+		infobox = ig.get_filled_infobox(args)
+		if infobox is not None and infobox != "":
+			result[1] = infobox + result[1]
+
 	j = {
 		"call": original_args,
 		"q": args["q"],
@@ -83,7 +90,7 @@ def api():
 		return html
 	else:
 		if "callback" in args:
-			return args["callback"]+"("+json.dumps(j)+")"
+			return args["callback"] + "(" + json.dumps(j) + ")"
 		else:
 			return jsonify(j)
 
