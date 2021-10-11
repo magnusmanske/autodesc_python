@@ -28,14 +28,11 @@ def test_short_description():
 
 	sd = ShortDescription()
 	desc = sd.loadItem("Q1035",{"lang":"de","links":"text"})
-	assert(desc[1]=="Geologe, Forschungsreisender, Reiseschriftsteller, Verhaltensforscher, Entomologe, Botaniker, Karzinologe, Imker, Naturwissenschaftler und Philosoph ♂; Royal Medal, Copley Medal, Pour le Mérite für Wissenschaften und Künste, Pour le Mérite, Fellow of the Linnean Society of London, Fellow of the Royal Geographical Society, Fellow of the Royal Society, Baly Medal, Fellow of the Geological Society, Bressa Prize, Ehrendoktor der Universität Leiden und Wollaston-Medaille; Mitglied von Royal Society, Deutsche Akademie der Naturforscher Leopoldina, Königlich Schwedische Akademie der Wissenschaften, American Philosophical Society, Ungarische Akademie der Wissenschaften, Schlesische Gesellschaft für vaterländische Kultur, American Academy of Arts and Sciences, Königlich Niederländische Akademie der Wissenschaften, Accademia Nazionale dei Lincei, Zoological Society of London, Académie des sciences, Russische Akademie der Wissenschaften, Preußische Akademie der Wissenschaften, Royal Geographical Society, Bayerische Akademie der Wissenschaften und Accademia delle Scienze Turin; Kind von Robert Darwin und Susannah Darwin; verheiratet mit Emma Darwin")
+	assert(desc[1]=="Geologe, Forschungsreisender, Reiseschriftsteller, Verhaltensforscher, Entomologe, Botaniker, Karzinologe, Imker, Naturwissenschaftler und Philosoph (1809–1882) ♂; Royal Medal, Copley Medal, Pour le Mérite für Wissenschaften und Künste, Pour le Mérite, Fellow of the Linnean Society of London, Fellow of the Royal Geographical Society, Fellow of the Royal Society, Baly Medal, Fellow of the Geological Society, Bressa Prize, Ehrendoktor der Universität Leiden und Wollaston-Medaille; Mitglied von Royal Society, Deutsche Akademie der Naturforscher Leopoldina, Königlich Schwedische Akademie der Wissenschaften, American Philosophical Society, Ungarische Akademie der Wissenschaften, Schlesische Gesellschaft für vaterländische Kultur, American Academy of Arts and Sciences, Königlich Niederländische Akademie der Wissenschaften, Accademia Nazionale dei Lincei, Zoological Society of London, Académie des sciences, Russische Akademie der Wissenschaften, Preußische Akademie der Wissenschaften, Royal Geographical Society, Bayerische Akademie der Wissenschaften und Accademia delle Scienze Turin; Kind von Robert Darwin und Susannah Darwin; verheiratet mit Emma Darwin")
 
 	sd = ShortDescription()
 	desc = sd.loadItem("Q4504",{"links":"wiki"})
 	assert(desc[1]=="[[Species|species]], named after [[Komodo (island)|Komodo]] of [[Monitor lizard|Varanus]]")
 
-#test_wikidata()
-#test_short_description()
-sd = ShortDescription()
-desc = sd.loadItem("Q74764",{"links":"text"})
-print (desc)
+test_wikidata()
+test_short_description()
