@@ -7,10 +7,10 @@ from flask import jsonify
 from html import escape
 from wikidata import WikiData
 from short_desc import ShortDescription
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 
-dotenv_path = '/data/project/autodesc/www/python/.env'
-load_dotenv(dotenv_path)
+#dotenv_path = '/data/project/autodesc/www/python/.env'
+#load_dotenv(dotenv_path)
 
 app = Flask(__name__)
 app.config["FLASK_ENV"] = "development"
