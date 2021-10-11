@@ -52,6 +52,7 @@ class InfoboxGenerator:
 		if item is None:
 			return ""
 		ib = self.find_infobox(options)
+		print(ib)
 		if ib is None:
 			return self.no_infobox_string  # No matching infobox found, blank string returned
 
