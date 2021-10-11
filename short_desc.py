@@ -531,16 +531,12 @@ class ShortDescription:
 		claims = self.wd.items[q].raw["claims"] if "claims" in self.wd.items[q].raw else []
 
 		if self.isPerson(claims):
-			print ("PERSON")
 			return self.describePerson(q, claims, opt)
 		elif self.isTaxon(claims):
-			print ("TAXON")
 			return self.describeTaxon(q, claims, opt)
 		elif self.isDisambig(claims):
-			print ("DISAMBIG`")
 			return self.setTarget(opt, self.txt("disambig", opt["lang"]), q)
 		else:
-			print ("GENERIC")
 			return self.describeGeneric(q, claims, opt)
 
 	def isDisambig(self, claims):
