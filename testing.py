@@ -2,6 +2,7 @@
 
 from wikidata import WikiData
 from short_desc import ShortDescription
+from infobox import InfoboxGenerator
 
 def test_wikidata():
 	q = "Q12345"
@@ -34,5 +35,10 @@ def test_short_description():
 	desc = sd.loadItem("Q4504",{"links":"wiki"})
 	assert(desc[1]=="[[Species|species]], named after [[Komodo (island)|Komodo]] of [[Monitor lizard|Varanus]]")
 
-test_wikidata()
-test_short_description()
+#test_wikidata()
+#test_short_description()
+
+args = { "q":"Q311243" , "lang":"en"}
+ig = InfoboxGenerator()
+infobox = ig.get_filled_infobox(args)
+print(infobox)

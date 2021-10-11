@@ -32,14 +32,13 @@ class InfoboxGenerator:
 		# Try auto-detect based on conditions
 
 		for v in self.infoboxes:
-			print (v)
 			if v["wiki"] != wiki:
 				continue
 			conditions = v["conditions"] if "conditions" in v else {}
 			for (check_p, check_qs) in conditions.items():
 				q_list = self.wd.items[o["q"]].getClaimItemsForProperty(check_p, True)
 				for check_q in check_qs:
-					if check_q in q_list:
+					if check_q not in q_list:
 						continue
 					return v
 
@@ -52,7 +51,6 @@ class InfoboxGenerator:
 		if item is None:
 			return ""
 		ib = self.find_infobox(options)
-		print(ib)
 		if ib is None:
 			return self.no_infobox_string  # No matching infobox found, blank string returned
 
@@ -134,7 +132,7 @@ class InfoboxGenerator:
 						parts.append(pre + param + post)
 
 					cnt += 1
-					if max in param:
+					if "max" not in param:
 						continue
 					if cnt >= param["max"]:
 						break
