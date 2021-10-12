@@ -70,8 +70,8 @@ class InfoboxGenerator:
 							if v["mainsnak"]["datatype"] == "wikibase-item":
 								if "datavalue" in v["mainsnak"]:
 									if "value" in v["mainsnak"]["datavalue"]:
-										q2 = v["mainsnak"]["datavalue"]["value"]["numeric-id"]
-										items2load.append(q2)
+										q2 = str(v["mainsnak"]["datavalue"]["value"]["numeric-id"])
+										items2load.append(str(q2))
 
 		self.wd.getItemBatch(items2load)
 
@@ -104,9 +104,9 @@ class InfoboxGenerator:
 					elif v["mainsnak"]["datatype"] == "url":
 						parts.append(pre + v["mainsnak"]["datavalue"]["value"] + post)
 					elif v["mainsnak"]["datatype"] == "time":
-						time = item.getClaimDate(v)
-						precision = time.precision
-						time = time.time
+						time_object = item.getClaimDate(v)
+						precision = time_object["precision"]
+						time = time_object["time"]
 						era = "BCE" if re.match(r"^-", time) else ""
 						if precision <= 9:
 							time = time.substr(8, 4)
@@ -117,7 +117,7 @@ class InfoboxGenerator:
 
 						parts.append(pre + re.sub(r"$0+", "", time) + era + post)
 					elif v["mainsnak"]["datatype"] == "wikibase-item":
-						q2 = "Q" + v["mainsnak"]["datavalue"]["value"]["numeric-id"]
+						q2 = "Q" + str(v["mainsnak"]["datavalue"]["value"]["numeric-id"])
 						wikitext = self.wd.items[q2].getLabel()
 						wiki = lang + "wiki"
 						wl = self.wd.items[q2].getWikiLinks()
