@@ -69,7 +69,7 @@ class LanguageRoot:
 		return self.main_title_label
 
 	def generateRelations(self):
-		if self.reasonator["generateRelations"] is None:
+		if "generateRelations" not in self.reasonator:
 			return
 		self.relations = self.reasonator.generateRelations(self.getMainQ())
 
@@ -82,13 +82,13 @@ class LanguageRoot:
 
 	def getBold(self, o):
 		if self.render_mode == 'text':
-			o["after"] = ' ' + '' if o["after"] is None else o["after"]
+			o["after"] = ' ' + '' if "after" not in o else o["after"]
 		elif self.render_mode == 'wiki':
-			o["before"] = ('' if o["after"] is None else o["before"]) + "'''"
-			o["after"] = "''' " + '' if o["after"] is None else o["after"]
+			o["before"] = ('' if "after" not in o else o["before"]) + "'''"
+			o["after"] = "''' " + '' if "after" not in o else o["after"]
 		else:  # Default
-			o["before"] = ('' if o["after"] is None else o["before"]) + '<b>'
-			o["after"] = '</b> ' + '' if o["after"] is None else o["after"]
+			o["before"] = ('' if "after" not in o else o["before"]) + '<b>'
+			o["after"] = '</b> ' + '' if "after" not in o else o["after"]
 		return o
 
 	def getNationalityFromCountry(self, country, claims, hints):
@@ -119,7 +119,7 @@ class LanguageRoot:
 		self.addWorkText()
 		self.addFamilyText()
 		self.addDeathText()
-		self.renderHTML()
+		return self.renderHTML()
 
 	def renderDate(self, claim, o):
 
@@ -127,9 +127,9 @@ class LanguageRoot:
 			o = {}
 		ret = {"after": ' '}
 
-		# 		var d = (claim.time===undefined) ? (claim.datavalue===undefined?this.i.getClaimDate(claim):claim.datavalue.value) : claim ;
+		# 		var d = (claim.time===undefined) ? (claim["datavalue"]===undefined?this.i.getClaimDate(claim):claim["datavalue"]["value"]) : claim ;
 		if "time" not in claim:
-			d = claim["datavalue"].value if "datavalue" in claim else self.i.getClaimDate(claim)
+			d = claim["datavalue"]["value"] if "datavalue" in claim else self.i.getClaimDate(claim)
 		else:
 			d = claim
 
@@ -192,11 +192,11 @@ class LanguageRoot:
 	def getQualifierItem(self, qualifiers, prop):
 		if qualifiers[prop] is None:
 			return
-		if qualifiers[prop][0].datavalue is None:
+		if "datavalue" not in qualifiers[prop][0]:
 			return
-		if qualifiers[prop][0].datavalue["value"] is None:
+		if "value" not in qualifiers[prop][0]["datavalue"]:
 			return
-		return 'Q' + qualifiers[prop][0]["datavalue"].value['numeric-id']
+		return 'Q' + qualifiers[prop][0]["datavalue"]["value"]["numeric-id"]
 
 	def getDatesFromQualifier(self, qualifiers):
 		ret = {}
@@ -239,7 +239,7 @@ class LanguageRoot:
 		if o is None:
 			o = {}
 		ret = []
-		props = [] if o["properties"] is None else o["properties"]
+		props = [] if "properties" not in o else o["properties"]
 		for prop in props:
 			claims = [] if self.i.raw.claims[prop] is None else self.i.raw["claims"][prop]
 			for claim in claims:
@@ -254,7 +254,7 @@ class LanguageRoot:
 				for (k, v) in qualifiers.items():
 					tmp = []
 					for prop2 in v:
-						if claim["qualifiers"] is None:
+						if "qualifiers" not in claim:
 							continue
 						tmp = tmp.concat(self.getQualifierItem(claim["qualifiers"], prop2))
 					em[k] = tmp
@@ -336,7 +336,7 @@ class LanguageRoot:
 
 	# TODO actually call subroutines
 	def listSentence(self, o):
-		if o["data"] is None:
+		if "data" not in o:
 			o["data"] = []
 		if o["data"]["length"] == 0:
 			return
@@ -348,7 +348,7 @@ class LanguageRoot:
 			dates = v["dates"]
 			show_date = False
 			# $.each ( [] if o["qualifiers"] is None else o["qualifiers"] , function ( qual , cb ) { "if" ( v[qual] is not None ) show_date = True } )
-			if dates is not None and (dates["from"] is not None or dates["to"] is not None):
+			if dates is not None and ("from" in dates or "to" in dates["to"]):
 				show_date = True
 			if show_date:
 				# if undefined !== o["date"]_start ) o["date"]_start(: #TODO
@@ -357,7 +357,7 @@ class LanguageRoot:
 
 				# if dates["to"] is not None and undefined !== o["date"]_to ) o["date"]_to ( function(o2){ self.h.push ( self.renderDate ( dates["to"] , o2 ) )} :
 
-				qualifiers = [] if o["qualifiers"] is None else o["qualifiers"]
+				qualifiers = [] if "qualifiers" not in o else o["qualifiers"]
 				for (qual, cb) in qualifiers.items():
 					if v[qual] is None:
 						continue
@@ -418,9 +418,9 @@ class LanguageRoot:
 			else:
 				if "q" in v["q"]:
 					main = self.getQlink(v["q"], {"label": v["label"]})
-			h2 += '' if v["before"] is None else v["before"]
+			h2 += '' if "before" not in v is None else v["before"]
 			h2 += main
-			h2 += '' if v["after"] is None else v["after"]
+			h2 += '' if "after" not in v else v["after"]
 
 		h2 = re.sub(r" +", ' ', h2)  # Excessive spaces
 		h2 = re.sub(r" \n", '\n', h2)  # Space before newline

@@ -3,6 +3,7 @@ from language_en import *
 from language_fr import *
 from language_nl import *
 
+
 class LongDescription:
 	def loadItem(self, q, params):
 		if "lang" not in params:
@@ -17,7 +18,7 @@ class LongDescription:
 		else:
 			return ShortDescription(q, params)
 		ld.q = q
+		ld.lang = params["lang"]
 		ld.setup()
-
-		return "So far so good..."
-
+		html = ld.run_person()  # TODO which function?
+		return html
