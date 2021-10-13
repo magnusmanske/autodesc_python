@@ -138,7 +138,7 @@ class InfoboxGenerator:
 						break
 
 				if "minor" in param and param["minor"] and len(parts) == 0:
-					return
+					continue
 				rows.append("| " + param["name"] + " = " + sep.join(parts))
 			else:
 				if "minor" in param and param["minor"]:
