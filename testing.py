@@ -60,7 +60,7 @@ def test_infobox_generator():
 
 def test_long_description():
 	ld = LongDescription()
-	desc = ld.loadItem("Q30", {"lang": "en", "links": "text"})
+	desc = ld.loadItem("Q80", {"lang": "en", "links": "text"})
 	print (desc)
 
 # test_wikidata()

@@ -1,18 +1,23 @@
 from short_desc import ShortDescription
-from languages import *
+from language_en import *
+from language_fr import *
+from language_nl import *
 
 class LongDescription:
-	def loadItem(self, q, props):
-		if "lang" not in props:
-			props["lang"] = "en"
+	def loadItem(self, q, params):
+		if "lang" not in params:
+			params["lang"] = "en"
 
-		if props["lang"] == "en":
+		if params["lang"] == "en":
 			ld = LanguageClassEn()
-		elif props["lang"] == "nl":
+		elif params["lang"] == "nl":
 			ld = LanguageClassNl()
-		elif props["lang"] == "fr":
+		elif params["lang"] == "fr":
 			ld = LanguageClassFr()
 		else:
-			return ShortDescription(q, props)
+			return ShortDescription(q, params)
+		ld.q = q
+		ld.setup()
+
 		return "So far so good..."
 

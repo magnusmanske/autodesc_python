@@ -1,10 +1,9 @@
 import re
-from languages import *
 from wikidata import *
 
 # ________________________________________________________________________________________________________________________________________________________________
 # BASE CLASS FOR LANGUAGE RENDERING
-class LanguageClass:
+class LanguageRoot:
 
 	def __init__(self, wd=None):
 		self.wd = wd
@@ -24,7 +23,8 @@ class LanguageClass:
 		self.lang = self.getMainLang()
 		if self.wd is None:
 			self.wd = WikiData()
-		self.h = []
+		self.h = {}
+		self.wd.getItemBatch([self.getMainQ()])
 		self.i = self.wd.items[self.getMainQ()]
 		self.is_dead = self.i.hasClaims('P570')
 
@@ -43,7 +43,7 @@ class LanguageClass:
 		return "en" if self.lang is None else self.lang
 
 	def getMainQ(self):
-		return self.q
+		return self.wd.sanitizeQ(self.q)
 
 	def getRelations(self):
 		return self.reasonator.main_type_object["relations"] if self.relations is None else self.relations
