@@ -50,18 +50,18 @@ def api():
 	except:
 		result = [q, "<i>Automatic description is not available</i>"]
 
+	output = str(result[1])
 	if args["links"] == "wiki" and args["get_infobox"] == "yes":
 		ig = InfoboxGenerator(wd)
 		infobox = ig.get_filled_infobox(args)
-		if infobox is not None and infobox != "":
-			result[1] = infobox + result[1]
+		output = infobox + output
 
 	j = {
 		"call": original_args,
 		"q": args["q"],
 		"label": wd.items[q].getLabel(args["lang"]),
 		"manual_description": wd.items[q].getDesc(args["lang"]),
-		"result": result[1]
+		"result": output
 	}
 
 	if args["format"] == "html":
