@@ -82,7 +82,7 @@ class InfoboxGenerator:
 				continue
 			pre = param["pre"] if "pre" in param else ""
 			post = param["post"] if "post" in param else ""
-			sep = param["sep"] if "sep" in param else ""
+			sep = param["sep"] if "sep" in param else ", "
 			if param["value"] == "label":
 				rows.append("| " + param["name"] + " = " + pre + item.getLabel() + post)
 			elif param["value"] == "alias":
