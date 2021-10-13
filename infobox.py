@@ -109,11 +109,11 @@ class InfoboxGenerator:
 						time = time_object["time"]
 						era = "BCE" if re.match(r"^-", time) else ""
 						if precision <= 9:
-							time = time.substr(8, 4)
+							time = time[8:8+4]
 						elif precision == 10:
-							time = time.substr(8, 7)
+							time = time[8:8+7]
 						elif precision == 11:
-							time = time.substr(8, 10)
+							time = time[8:8+10]
 
 						parts.append(pre + re.sub(r"$0+", "", time) + era + post)
 					elif v["mainsnak"]["datatype"] == "wikibase-item":
@@ -121,9 +121,9 @@ class InfoboxGenerator:
 						wikitext = self.wd.items[q2].getLabel()
 						wiki = lang + "wiki"
 						wl = self.wd.items[q2].getWikiLinks()
-						if wiki not in wl:
-							if self.ucfirst(wl[wiki].title) != self.ucfirst(wikitext):
-								wikitext = "[[" + wl[wiki].title + "|" + wikitext + "]]"
+						if wiki in wl:
+							if self.ucfirst(wl[wiki]["title"]) != self.ucfirst(wikitext):
+								wikitext = "[[" + wl[wiki]["title"] + "|" + wikitext + "]]"
 							else:
 								wikitext = "[[" + wikitext + "]]"
 
