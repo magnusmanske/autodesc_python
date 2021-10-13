@@ -2,6 +2,7 @@
 
 from wikidata import WikiData
 from short_desc import ShortDescription
+from long_desc import LongDescription
 from infobox import InfoboxGenerator
 
 
@@ -57,6 +58,12 @@ def test_infobox_generator():
 }}
 """)
 
+def test_long_description():
+	ld = LongDescription()
+	desc = ld.loadItem("Q30", {"lang": "en", "links": "text"})
+	print (desc)
+
 # test_wikidata()
 # test_short_description()
-#test_infobox_generator()
+# test_infobox_generator()
+test_long_description()

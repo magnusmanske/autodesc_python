@@ -1,4 +1,4 @@
-from long_desc import LanguageClass
+from language import LanguageClass
 
 # TODO make an object of those, one per language, set self to the current language, or fallback
 language_specs = []
@@ -45,7 +45,7 @@ class LanguageClassEn(LanguageClass):
 			"item_start" : lambda lst: ( lst[1](), lst[0].h.append ( { "label":' ' } )  ) ,
 			"date_from" : lambda lst: ( lst[0].h.append ( { "label":'from ' } ) , lst[1]({ "no_prefix":True}) ) ,
 			"date_to" : lambda lst: ( lst[0].h.append ( { "label":'until ' } ) , lst[1]({ "no_prefix":True}) ) ,
-			"qualifiers" : { "job":function(qv){ self.h.append ( { "before":'as ' , "q" :qv[0] , "after" :' ' } )} } ,
+			# TODO FIXME "qualifiers" : { "job":function(qv){ self.h.append ( { "before":'as ' , "q" :qv[0] , "after" :' ' } )} } ,
 			"item_end" : lambda lst: { lst[0].h.append ( { "label":lst[2]+'for ' if lst[1]+1<d.length else '' } ) } ,
 			"end" : lambda lst: lst[0].h.append ( { "label":'. ' } )
 		} )
@@ -58,7 +58,7 @@ class LanguageClassEn(LanguageClass):
 			"item_start" : lambda lst: (lst[1](), lst[0].h.append ( { "label":' ' } ) ) ,
 			"date_from" : lambda lst: ( lst[0].h.append ( { "label":'from ' } ) , lst[1]({ "no_prefix":True}) ) ,
 			"date_to" : lambda lst: ( lst[0].h.append ( { "label":'until ' } ) , lst[1]({ "no_prefix":True}) ) ,
-			"qualifiers" : { "of":function(qv){ self.h.append ( { "before":'for ' , "q" :qv[0] , "after" :' ' } )} } ,
+			# TODO FIXME "qualifiers" : { "of":function(qv){ self.h.append ( { "before":'for ' , "q" :qv[0] , "after" :' ' } )} } ,
 			"item_end" : lambda lst: { lst[0].h.append ( { "label":lst[2] } ) } ,
 			"end" : lambda lst: lst[0].h.append ( { "label":'. ' } ) 
 		} )
@@ -240,7 +240,7 @@ class LanguageClassNl(LanguageClass):
 			"item_start" : lambda lst: ( lst[1](), lst[0].h.append ( { "label":' ' } )  ) ,
 			"date_from" : lambda lst: ( lst[0].h.append ( { "label":'van ' } ) , lst[1]({ "no_prefix":True}) ) ,
 			"date_to" : lambda lst: ( lst[0].h.append ( { "label":'tot ' } ) , lst[1]({ "no_prefix":True}) ) ,
-			"qualifiers" : { "job":function(qv){ self.h.append ( { "before":'als ' , "q" :qv[0] , "after" :' ' } )} } ,
+			# TODO FIXME "qualifiers" : { "job":function(qv){ self.h.append ( { "before":'als ' , "q" :qv[0] , "after" :' ' } )} } ,
 			"item_end" : lambda lst: { lst[0].h.append ( { "label":lst[2]+'voor ' if lst[1]+1<d.length else '' } ) } ,
 			"end" : lambda lst: lst[0].h.append ( { "label":'. ' } ) 
 		} )
@@ -438,7 +438,7 @@ class LanguageClassFr(LanguageClass):
 			"item_start" : lambda lst: ( lst[1](), lst[0].h.append ( { "label":' ' } )  ) ,
 			"date_from" : lambda lst: ( lst[0].h.append ( { "label":'depuis ' } ) , lst[1]() ) ,
 			"date_to" : lambda lst: ( lst[0].h.append ( { "label":'jusque ' } ) , lst[1]({ "jusque":True}) ) ,
-			"qualifiers" : { "job":function(qv){ self.h.append ( { "before":'en tant que ' , "q" :qv[0] , "after" :' ' } )} } ,
+			# TODO FIXME "qualifiers" : { "job":function(qv){ self.h.append ( { "before":'en tant que ' , "q" :qv[0] , "after" :' ' } )} } ,
 			"item_end" : lambda lst: { lst[0].h.append ( { "label":lst[2]+'pour ' if lst[1]+1<d.length else '' } ) } ,
 			"end" : lambda lst: lst[0].h.append ( { "label":'. ' } ) 
 		} )
@@ -452,7 +452,7 @@ class LanguageClassFr(LanguageClass):
 			"item_start" : lambda lst: ( lst[1](), lst[0].h.append ( { "label":' ' } )  ) ,
 			"date_from" : lambda lst: ( lst[0].h.append ( { "label":'depuis ' } ) , lst[1]() ) ,
 			"date_to" : lambda lst: ( lst[0].h.append ( { "label":'jusque ' } ) , lst[1]({ "jusque":True}) ) ,
-			"qualifiers" : { "of":function(qv){ self.h.append ( { "before":'pour ' , "q" :qv[0] , "after" :' ' } )} } ,
+			# TODO FIXME "qualifiers" : { "of":function(qv){ self.h.append ( { "before":'pour ' , "q" :qv[0] , "after" :' ' } )} } ,
 			"item_end" : lambda lst: { lst[0].h.append ( { "label":lst[2] } ) } ,
 			"end" : lambda lst: lst[0].h.append ( { "label":'. ' } ) 
 		} )
