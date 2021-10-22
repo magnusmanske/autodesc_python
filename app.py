@@ -78,7 +78,7 @@ def api():
 	elif args["format"] == "jsonfm":
 		json_link = []
 		for (k, v) in args.items():
-			json_link.append(k + "=" + escape("json" if k == "format" else v))
+			json_link.append(k + "=" + escape("json" if k == "format" else str(v)))
 		json_link = "<a href='?" + "&".join(json_link) + "'>format=json</a>"
 		html = html_header
 		html += "<p>You are looking at the HTML representation of the JSON format. HTML is good for debugging, but is unsuitable for application use.</p>"
