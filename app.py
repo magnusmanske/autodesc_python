@@ -89,7 +89,7 @@ def api():
 		html += "</body></html>"
 		return html
 	else:
-		if "callback" in args:
+		if "callback" in args and args["callback"] is not None:
 			return args["callback"] + "(" + json.dumps(j) + ")"
 		else:
 			return jsonify(j)
