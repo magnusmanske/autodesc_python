@@ -8,13 +8,13 @@ from html import escape
 from wikidata import WikiData
 from short_desc import ShortDescription
 from infobox import InfoboxGenerator
+from media import MediaGenerator
 
 app = Flask(__name__)
 app.config["FLASK_ENV"] = "development"
 
 html_header = "<!DOCTYPE html><html><head><meta charset=\"utf-8\"> </head><body>"
 default_language = "en"
-
 
 @app.route("/")
 def api():
@@ -28,6 +28,9 @@ def api():
 	parser.add_argument("format", type=str, default="jsonfm")  # jsonfm/json/html
 	parser.add_argument("get_infobox", type=str, default="yes")  # yes/""
 	parser.add_argument("infobox_template", type=str, default="")
+	parser.add_argument("media", type=str, default="")
+	parser.add_argument("thumb", type=str, default="")
+	parser.add_argument("user_zoom", type=int, default=4)
 	parser.add_argument("callback", type=str, default=None)
 	args = parser.parse_args()
 	original_args = args.copy()
@@ -43,8 +46,8 @@ def api():
 	args["q"] = q
 	# TODO check pattern Qxxx
 
+	wd = WikiData()
 	try:
-		wd = WikiData()
 		sd = ShortDescription(wd)
 		result = sd.loadItem(q, args)
 	except:
@@ -63,6 +66,13 @@ def api():
 		"manual_description": wd.items[q].getDesc(args["lang"]),
 		"result": output
 	}
+
+	if args["media"] == "1":
+		mg = MediaGenerator(wd)
+		j["media"] = mg.generateMedia(q,args["thumb"],args["user_zoom"])
+		if "thumbnails" in j["media"]:
+			j["thumbnails"] = j["media"]["thumbnails"]
+			j["media"].pop("thumbnails")
 
 	if args["format"] == "html":
 		html = html_header

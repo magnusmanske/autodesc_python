@@ -355,6 +355,9 @@ class WikiData:
 			ret = type.upper() + ret
 		return ret
 
+	def hasItem(self, q):
+		return self.getUnifiedID(q) in self.items
+
 	def getItem(self, q):
 		return self.items[self.getUnifiedID(q)]
 

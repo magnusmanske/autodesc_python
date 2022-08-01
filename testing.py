@@ -4,7 +4,7 @@ from wikidata import WikiData
 from short_desc import ShortDescription
 from long_desc import LongDescription
 from infobox import InfoboxGenerator
-
+from media import MediaGenerator
 
 def test_wikidata():
 	q = "Q12345"
@@ -63,7 +63,21 @@ def test_long_description():
 	desc = ld.loadItem("Q80", {"lang": "en", "links": "text"})
 	print (desc)
 
+def test_media_generator():
+	thumb = "80"
+	mg = MediaGenerator()
+	media = mg.generateMedia("Q0")
+	assert(media=={"thumbnails":{}})
+
+	mg = MediaGenerator()
+	media = mg.generateMedia("Q350",thumb)
+	assert("image" in media)
+	assert("coat_of_arms" in media)
+	assert("banner" in media)
+	assert("osm_map" in media["thumbnails"])
+
 # test_wikidata()
 # test_short_description()
 # test_infobox_generator()
-test_long_description()
+# test_long_description()
+test_media_generator()
