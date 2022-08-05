@@ -435,7 +435,7 @@ class ShortDescription:
 			cl = i.getClaimsForProperty(1082)
 			best = self.getBestQuantity(cl)
 			label = self.wd.getItem('P1082').getLabel()
-			h.append(', ' + label + ' ' + best)
+			h.append(f', {label} {best}')
 
 		# Creator etc.
 		self.add2desc(h, item_labels, [175, 86, 170, 57, 50, 61, 176], {"txt_key": 'by', "o": opt})
