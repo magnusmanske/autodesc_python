@@ -1,24 +1,23 @@
+from language_en import LanguageClassEn
+from language_fr import LanguageClassFr
+from language_nl import LanguageClassNl
 from short_desc import ShortDescription
-from language_en import *
-from language_fr import *
-from language_nl import *
 
 
 class LongDescription:
-	def loadItem(self, q, params):
-		if "lang" not in params:
-			params["lang"] = "en"
+    def loadItem(self, q, params):
+        language = "en" if "lang" not in params else params["lang"]
 
-		if params["lang"] == "en":
-			ld = LanguageClassEn()
-		elif params["lang"] == "nl":
-			ld = LanguageClassNl()
-		elif params["lang"] == "fr":
-			ld = LanguageClassFr()
-		else:
-			return ShortDescription(q, params)
-		ld.q = q
-		ld.lang = params["lang"]
-		ld.setup()
-		html = ld.run_person()  # TODO which function?
-		return html
+        if language == "en":
+            ld = LanguageClassEn()
+        elif params["lang"] == "nl":
+            ld = LanguageClassNl()
+        elif params["lang"] == "fr":
+            ld = LanguageClassFr()
+        else:
+            return ShortDescription(q, params)
+        ld.q = q
+        ld.lang = params["lang"]
+        ld.setup()
+        html = ld.run_person()  # TODO which function?
+        return html
